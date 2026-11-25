@@ -335,6 +335,34 @@ Content-Type: application/json
       "finalResult": "pending",
       "decisionNote": ""
     },
+    {
+      "applicationId": "A02",
+      "applicantName": "Nguyễn Minh Anh",
+      "studentId": "S20241001",
+      "positionId": "pos-comms",
+      "positionTitle": "Communications Coordinator",
+      "interviewerName": "Hoàng Thảo Vy",
+      "assessment": {
+        "id": "asm-A02",
+        "recommendation": "conditional",
+        "score": 6,
+        "feedback": "Polite communication, limited external partner outreach experience.",
+        "submittedAt": "…"
+      },
+      "finalResult": "pending",
+      "decisionNote": ""
+    },
+    {
+      "applicationId": "A03",
+      "applicantName": "Lê Thu Hà",
+      "studentId": "S20241002",
+      "positionId": "pos-content",
+      "positionTitle": "Content Team Specialist",
+      "interviewerName": "Trần Gia Huy",
+      "assessment": null,
+      "finalResult": "pending",
+      "decisionNote": ""
+    },
     …
   ]
 }
@@ -580,7 +608,36 @@ Content-Type: application/json
       "finalResult": "pass",
       "resultPublishedAt": "…"
     },
-    …
+    {
+      "id": "A02",
+      "campaignId": "camp-2026-fall",
+      "positionId": "pos-comms",
+      "positionTitle": "Communications Coordinator",
+      "department": "Media & Communications",
+      "submittedAt": "…",
+      "screeningStatus": "shortlisted",
+      "interview": {
+        "date": "2026-12-07",
+        "startTime": "09:40",
+        "endTime": "10:00",
+        "roomName": "Room C (Design Studio)",
+        "interviewerName": "Hoàng Thảo Vy"
+      },
+      "finalResult": "fail",
+      "resultPublishedAt": "…"
+    },
+    {
+      "id": "A09",
+      "campaignId": "camp-2026-fall",
+      "positionId": "pos-design",
+      "positionTitle": "Design & Media Specialist",
+      "department": "Creative Arts",
+      "submittedAt": "…",
+      "screeningStatus": "rejected",
+      "interview": null,
+      "finalResult": "pending",
+      "resultPublishedAt": "…"
+    }
   ]
 }
 ```
@@ -693,3 +750,4 @@ Content-Type: application/json
 ## Changes
 
 - `2026-11-25`: Initial interviewer assessments, final pass/fail results, and in-app notifications contract defined for steps C10 and C11.
+- `2026-11-25`: Updated `GET /api/results` and `GET /api/applications/mine` response examples to show both object and `null` item shapes (`A03`–`A06` with `assessment: null`; rejected `A09` with `interview: null`) so `contract-check.mjs` validates trailing array items accurately.
