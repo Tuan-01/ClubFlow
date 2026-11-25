@@ -1,0 +1,90 @@
+[
+  {
+    "id": "u-exec",
+    "name": "Lê Minh Khôi",
+    "email": "exec@clubflow.test",
+    "password": "exec-demo",
+    "role": "executive",
+    "studentId": null
+  },
+  {
+    "id": "u-studenta",
+    "name": "Nguyễn Minh Anh",
+    "email": "studenta@clubflow.test",
+    "password": "studenta-demo",
+    "role": "applicant",
+    "studentId": "S20241001"
+  },
+  {
+    "id": "u-studentb",
+    "name": "Lê Thu Hà",
+    "email": "studentb@clubflow.test",
+    "password": "studentb-demo",
+    "role": "applicant",
+    "studentId": "S20241002"
+  },
+  {
+    "id": "u-studentc",
+    "name": "Phạm Quốc Bảo",
+    "email": "studentc@clubflow.test",
+    "password": "studentc-demo",
+    "role": "applicant",
+    "studentId": "S20241003"
+  },
+  {
+    "id": "u-studentd",
+    "name": "Đỗ Đức Thắng",
+    "email": "studentd@clubflow.test",
+    "password": "studentd-demo",
+    "role": "applicant",
+    "studentId": "S20241004"
+  },
+  {
+    "id": "u-studente",
+    "name": "Vũ Mai Linh",
+    "email": "studente@clubflow.test",
+    "password": "studente-demo",
+    "role": "applicant",
+    "studentId": "S20241005"
+  },
+  {
+    "id": "u-studentf",
+    "name": "Bùi Quang Huy",
+    "email": "studentf@clubflow.test",
+    "password": "studentf-demo",
+    "role": "applicant",
+    "studentId": "S20241006"
+  },
+  {
+    "id": "u-studentg",
+    "name": "Ngô Khánh Vy",
+    "email": "studentg@clubflow.test",
+    "password": "studentg-demo",
+    "role": "applicant",
+    "studentId": "S20241007"
+  },
+  {
+    "id": "u-int-content",
+    "name": "Trần Gia Huy",
+    "email": "int-content@clubflow.test",
+    "password": "int-content-demo",
+    "role": "interviewer",
+    "studentId": null
+  },
+  {
+    "id": "u-int-comms",
+    "name": "Hoàng Thảo Vy",
+    "email": "int-comms@clubflow.test",
+    "password": "int-comms-demo",
+    "role": "interviewer",
+    "studentId": null
+  },
+  {
+    "id": "u-int-ops",
+    "name": "Phạm Minh Đức",
+    "email": "int-ops@clubflow.test",
+    "password": "int-ops-demo",
+    "role": "interviewer",
+    "studentId": null
+  }
+]

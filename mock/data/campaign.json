@@ -1,0 +1,49 @@
+{
+  "id": "camp-2026-fall",
+  "name": "SAB Recruitment 2026",
+  "clubName": "Student Activities Board (SAB)",
+  "description": "Join our student community to organize campus events, build multimedia campaigns, and support student life.",
+  "openingDate": "2026-11-10",
+  "closingDate": "2026-11-30",
+  "interviewDate": "2026-12-07",
+  "instructions": "Submit one application per position with a PDF CV (max 5 MB), a motivation statement (max 300 words), and your interview slot availability.",
+  "status": "published",
+  "applicationsOpen": true,
+  "isReadOnly": false,
+  "draftSavedAt": "2026-11-10T08:00:00.000Z",
+  "publishedAt": "2026-11-10T08:30:00.000Z",
+  "positions": [
+    {
+      "id": "pos-content",
+      "department": "Media & Communications",
+      "title": "Content Team Specialist",
+      "quota": 3,
+      "description": "Write engaging social media posts, press copy, and campaign narratives.",
+      "requirements": "Strong copywriting skills and familiarity with student communication channels."
+    },
+    {
+      "id": "pos-comms",
+      "department": "Media & Communications",
+      "title": "Communications Coordinator",
+      "quota": 2,
+      "description": "Coordinate external outreach, partner messaging, and event PR.",
+      "requirements": "Clear verbal communication and stakeholder coordination skills."
+    },
+    {
+      "id": "pos-design",
+      "department": "Creative Arts",
+      "title": "Design & Media Specialist",
+      "quota": 2,
+      "description": "Produce event posters, stage visuals, and digital flyers.",
+      "requirements": "Proficiency in Figma or Adobe Creative Suite and basic visual design portfolio."
+    },
+    {
+      "id": "pos-events",
+      "department": "Logistics & Planning",
+      "title": "Event Operations Coordinator",
+      "quota": 5,
+      "description": "Support on-ground logistics, venue booking coordination, and stage management.",
+      "requirements": "Teamwork, problem-solving under pressure, and event coordination experience."
+    }
+  ]
+}

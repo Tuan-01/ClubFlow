@@ -1,0 +1,79 @@
+{
+  "campaignId": "camp-2026-fall",
+  "interviewDate": "2026-12-07",
+  "slotDurationMinutes": 20,
+  "isReadOnly": false,
+  "selectedRoomIds": ["room-a", "room-b", "room-c"],
+  "rooms": [
+    {
+      "id": "room-a",
+      "name": "Room A (Media Lab)",
+      "location": "Building B, 201"
+    },
+    {
+      "id": "room-b",
+      "name": "Room B (Seminar 302)",
+      "location": "Building B, 302"
+    },
+    {
+      "id": "room-c",
+      "name": "Room C (Design Studio)",
+      "location": "Building C, 105"
+    }
+  ],
+  "availableSlots": [
+    "09:00-09:20",
+    "09:20-09:40",
+    "09:40-10:00",
+    "10:00-10:20",
+    "10:20-10:40",
+    "10:40-11:00",
+    "11:00-11:20",
+    "11:20-11:40",
+    "11:40-12:00"
+  ],
+  "interviewers": [
+    {
+      "id": "u-int-content",
+      "name": "Trần Gia Huy",
+      "email": "int-content@clubflow.test",
+      "positionIds": ["pos-content", "pos-design"],
+      "availableSlots": [
+        "09:00-09:20",
+        "09:20-09:40",
+        "09:40-10:00",
+        "10:00-10:20",
+        "10:20-10:40",
+        "10:40-11:00",
+        "11:00-11:20"
+      ]
+    },
+    {
+      "id": "u-int-comms",
+      "name": "Hoàng Thảo Vy",
+      "email": "int-comms@clubflow.test",
+      "positionIds": ["pos-comms", "pos-events"],
+      "availableSlots": [
+        "09:00-09:20",
+        "09:20-09:40",
+        "09:40-10:00",
+        "10:00-10:20",
+        "10:20-10:40",
+        "10:40-11:00"
+      ]
+    },
+    {
+      "id": "u-int-ops",
+      "name": "Phạm Minh Đức",
+      "email": "int-ops@clubflow.test",
+      "positionIds": ["pos-events"],
+      "availableSlots": [
+        "09:00-09:20",
+        "09:20-09:40",
+        "09:40-10:00",
+        "10:00-10:20",
+        "10:20-10:40"
+      ]
+    }
+  ]
+}
