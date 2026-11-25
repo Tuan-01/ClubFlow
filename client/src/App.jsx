@@ -3,6 +3,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ExecutiveCampaignPage } from './pages/ExecutiveCampaignPage';
+import { ExecutiveInterviewSetupPage } from './pages/ExecutiveInterviewSetupPage';
 import {
   ApplicationDetailStubPage,
   ApplyStubPage,
@@ -58,13 +60,7 @@ export function App() {
             path="/executive/campaign"
             element={
               <ProtectedRoute allowedRoles={['executive']}>
-                <ExecutiveRouteStubPage
-                  title="Campaign Setup"
-                  heading="Recruitment Campaign Builder"
-                  stepLabel="Step C3"
-                  endpointHint="GET /api/campaign"
-                  subtitle="Configure campaign details, dates, instructions, departments, and positions."
-                />
+                <ExecutiveCampaignPage />
               </ProtectedRoute>
             }
           />
@@ -72,13 +68,7 @@ export function App() {
             path="/executive/interview-setup"
             element={
               <ProtectedRoute allowedRoles={['executive']}>
-                <ExecutiveRouteStubPage
-                  title="Interview Setup"
-                  heading="Interview Setup"
-                  stepLabel="Step C4"
-                  endpointHint="GET /api/interview-setup"
-                  subtitle="Assign interviewers to positions, configure available slots, rooms, and duration."
-                />
+                <ExecutiveInterviewSetupPage />
               </ProtectedRoute>
             }
           />
