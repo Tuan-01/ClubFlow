@@ -14,7 +14,7 @@ All summary counts are strictly derived from `assignments`:
 - **Allowed roles**: `executive`
 - **Path / Query parameters**: None
 - **Headers**: `Authorization: Bearer <token>`
-- **Success response (`200 OK`)**: Returns current schedule status (`"not_generated"`, `"draft"`, or `"confirmed"`), parameters (`date`, `windowStart`, `windowEnd`, `slotDurationMinutes`), computed `summary`, `conflicts`, `assignments`, and lookup lists (`interviewers`, `rooms`). In `MOCK_MODE=empty`, `assignments` and `conflicts` are `[]` and all summary counts are `0`.
+- **Success response (`200 OK`)**: Returns current schedule status (`"not_generated"`, `"draft"`, or `"confirmed"`), parameters (`date`, `windowStart`, `windowEnd`, `slotDurationMinutes`), computed `summary`, `conflicts`, and `assignments`. Lookup lists (`interviewers`, `rooms`) are loaded from `GET /api/interview-setup`. In `MOCK_MODE=empty`, `assignments` and `conflicts` are `[]` and all summary counts are `0`.
 - **Error responses**:
   - `401 Unauthorized` (`UNAUTHORIZED`)
   - `403 Forbidden` (`FORBIDDEN`)
@@ -362,6 +362,7 @@ Content-Type: application/json
   - `401 Unauthorized` (`UNAUTHORIZED`)
   - `403 Forbidden` (`FORBIDDEN`)
   - `409 Conflict` (`SCHEDULE_CONFIRMED`): read-only after confirmation.
+  - `409 Conflict` (`SCHEDULE_NOT_GENERATED`): no schedule draft exists yet.
 
 ### Example — Save draft changes (`200 OK`)
 
@@ -492,3 +493,4 @@ Content-Type: application/json
 ## Changes
 
 - `2026-11-25`: Initial interview scheduling, conflict detection, and confirmation contract defined for steps C8 and C9.
+- `2026-11-26`: Clarified that `GET /api/schedule` returns schedule data without duplicating `interviewers`/`rooms` lookup lists (fetched via `GET /api/interview-setup`), and documented `409 SCHEDULE_NOT_GENERATED` on `PUT /api/schedule`.

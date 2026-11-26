@@ -128,7 +128,7 @@ Content-Type: application/json
     "major": "Business IT",
     "yearOfStudy": 2,
     "motivationStatement": "…",
-    "wordCount": 22,
+    "wordCount": 19,
     "availabilitySlots": ["10:20-10:40", "10:40-11:00"],
     "cvFileName": "cv-studenta.pdf",
     "cvFileSizeBytes": 204800,
@@ -705,3 +705,4 @@ Content-Type: application/json
 ## Changes
 
 - `2026-11-25`: Initial applications, CV upload/download, and CV screening contract defined for steps C5, C6, and C7.
+- `2026-11-26`: Corrected example `wordCount` (`22` → `19`) in `POST /api/applications` response and aligned seed `wordCount` values in `mock/data/applications.json` to match exact statement word counts.

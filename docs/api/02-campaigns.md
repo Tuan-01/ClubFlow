@@ -576,3 +576,4 @@ Content-Type: application/json
 ## Changes
 
 - `2026-11-25`: Initial campaign and interview-setup contract defined for steps C1, C3, C4, and C5/C9 campaign close.
+- `2026-11-26`: Updated `PUT /api/interview-setup` in `mock/server.mjs` to validate interviewer IDs against seeded interviewer users so partial updates do not permanently drop interviewers from future edits.

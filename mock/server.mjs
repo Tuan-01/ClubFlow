@@ -1091,11 +1091,13 @@ async function handleRequest(req, res) {
       fields.selectedRoomIds = 'Selected rooms must exist in the pre-configured room list.';
     }
 
+    const validInterviewerUsers = users.filter((u) => u.role === 'interviewer');
+
     if (!Array.isArray(body.interviewers) || body.interviewers.length === 0) {
       fields.interviewers = 'Assign at least one interviewer.';
     } else {
       body.interviewers.forEach((iv, idx) => {
-        if (!iv || typeof iv !== 'object' || !interviewSetup.interviewers.some((x) => x.id === iv.id)) {
+        if (!iv || typeof iv !== 'object' || !validInterviewerUsers.some((x) => x.id === iv.id)) {
           fields[`interviewers[${idx}].id`] = 'Unknown interviewer ID.';
         }
         if (!Array.isArray(iv?.positionIds) || iv.positionIds.length === 0 || iv.positionIds.some((pid) => !validPosIds.has(pid))) {
@@ -1121,7 +1123,7 @@ async function handleRequest(req, res) {
     schedule.parameters.slotDurationMinutes = body.slotDurationMinutes;
 
     interviewSetup.interviewers = body.interviewers.map((iv) => {
-      const existing = interviewSetup.interviewers.find((x) => x.id === iv.id);
+      const existing = validInterviewerUsers.find((x) => x.id === iv.id);
       return {
         id: existing.id,
         name: existing.name,
