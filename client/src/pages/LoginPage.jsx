@@ -66,6 +66,8 @@ export function LoginPage() {
   const [signingOut, setSigningOut] = useState(false);
 
   const abortRef = useRef(null);
+  const isSubmittingRef = useRef(false);
+  const isSigningOutRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -111,7 +113,7 @@ export function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (submitting) return;
+    if (isSubmittingRef.current || submitting) return;
 
     setHasSubmitted(true);
     setFormError('');
@@ -123,6 +125,7 @@ export function LoginPage() {
     }
 
     setFieldErrors({});
+    isSubmittingRef.current = true;
     setSubmitting(true);
 
     if (abortRef.current) {
@@ -149,15 +152,21 @@ export function LoginPage() {
       }
       setFormError(err.message || 'Sign in failed. Please check your credentials.');
     } finally {
+      isSubmittingRef.current = false;
       setSubmitting(false);
     }
   };
 
   const handleSignOut = async () => {
-    if (signingOut) return;
+    if (isSigningOutRef.current || signingOut) return;
+    isSigningOutRef.current = true;
     setSigningOut(true);
-    await logout();
-    setSigningOut(false);
+    try {
+      await logout();
+    } finally {
+      isSigningOutRef.current = false;
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -179,7 +188,7 @@ export function LoginPage() {
       </div>
 
       {isAuthenticated && (
-        <section className="alert alert-info" aria-label="Current active session">
+        <div className="alert alert-info" role="status" aria-label="Current active session">
           <div className="alert-content">
             <div className="alert-title">Currently signed in as {user.name}</div>
             <p className="page-subtitle">
@@ -200,7 +209,7 @@ export function LoginPage() {
               {signingOut ? 'Signing out...' : 'Sign Out'}
             </button>
           </div>
-        </section>
+        </div>
       )}
 
       <div className="login-grid">

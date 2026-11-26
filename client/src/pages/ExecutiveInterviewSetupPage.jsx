@@ -214,8 +214,14 @@ export function ExecutiveInterviewSetupPage() {
     if (isReadOnly || submitting) return;
     const nextDuration = Number(e.target.value);
     const defaultGrid = generateDefaultSlots(nextDuration);
+    const customMatching = form.slotOptions.filter(
+      (s) => !defaultGrid.includes(s) && slotDurationMinutesOf(s) === nextDuration
+    );
+    const nextOptions = [...new Set([...defaultGrid, ...customMatching])].sort();
     const nextInterviewers = form.interviewers.map((iv) => {
-      const matching = iv.availableSlots.filter((s) => defaultGrid.includes(s));
+      const matching = iv.availableSlots.filter(
+        (s) => slotDurationMinutesOf(s) === nextDuration
+      );
       return {
         ...iv,
         availableSlots: matching
@@ -225,9 +231,10 @@ export function ExecutiveInterviewSetupPage() {
       ...form,
       slotDurationMinutes: nextDuration,
       interviewers: nextInterviewers,
-      slotOptions: [...defaultGrid]
+      slotOptions: nextOptions
     };
     setForm(nextForm);
+    setCustomSlotErrors({});
     setFormBanner({
       type: 'info',
       title: `Slot duration set to ${nextDuration} minutes`,
@@ -319,7 +326,16 @@ export function ExecutiveInterviewSetupPage() {
     const nextForm = { ...form, interviewers: nextInterviewers };
     setForm(nextForm);
     setFormBanner(null);
-    revalidateIfNeeded(nextForm);
+    const errKey = `interviewers[${ivIdx}].availableSlots`;
+    if (hasAttemptedSubmit) {
+      revalidateIfNeeded(nextForm);
+    } else if (fieldErrors[errKey]) {
+      setFieldErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[errKey];
+        return copy;
+      });
+    }
   };
 
   const handleClearSlotsForInterviewer = (ivIdx) => {
@@ -341,6 +357,13 @@ export function ExecutiveInterviewSetupPage() {
       setCustomSlotErrors((prev) => ({
         ...prev,
         [iv.id]: 'Enter a valid time range in HH:MM-HH:MM format (end time after start time).'
+      }));
+      return;
+    }
+    if (slotDurationMinutesOf(raw) !== form.slotDurationMinutes) {
+      setCustomSlotErrors((prev) => ({
+        ...prev,
+        [iv.id]: `Custom slot must match the selected ${form.slotDurationMinutes}-minute duration.`
       }));
       return;
     }
@@ -366,7 +389,16 @@ export function ExecutiveInterviewSetupPage() {
     setCustomSlots((prev) => ({ ...prev, [iv.id]: '' }));
     setCustomSlotErrors((prev) => ({ ...prev, [iv.id]: '' }));
     setFormBanner(null);
-    revalidateIfNeeded(nextForm);
+    const errKey = `interviewers[${ivIdx}].availableSlots`;
+    if (hasAttemptedSubmit) {
+      revalidateIfNeeded(nextForm);
+    } else if (fieldErrors[errKey]) {
+      setFieldErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[errKey];
+        return copy;
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -480,10 +512,18 @@ export function ExecutiveInterviewSetupPage() {
         />
       )}
 
+      {!isLoading && !loadError && !setup && (
+        <EmptyState
+          title="No interview setup available"
+          message="No interview setup configuration is available for this campaign yet."
+          action={{ to: '/executive/campaign', label: 'Review Campaign Setup' }}
+        />
+      )}
+
       {!isLoading && !loadError && setup && (
         <>
           {isReadOnly && (
-            <section className="alert alert-warning" role="status" aria-label="Read-only schedule lock">
+            <div className="alert alert-warning" role="status" aria-label="Read-only schedule lock">
               <div className="alert-content">
                 <div className="alert-title">Interview Setup Locked (Schedule Confirmed)</div>
                 <p style={{ marginBottom: 0 }}>
@@ -493,7 +533,7 @@ export function ExecutiveInterviewSetupPage() {
               <Link to="/executive/scheduling" className="btn btn-outline">
                 View Confirmed Schedule
               </Link>
-            </section>
+            </div>
           )}
 
           {formBanner && (
@@ -841,7 +881,7 @@ export function ExecutiveInterviewSetupPage() {
                 </div>
               </section>
 
-              <section className="card action-bar-card" aria-label="Interview setup actions">
+              <div className="card action-bar-card" aria-label="Interview setup actions">
                 <div className="action-bar">
                   <div className="header-actions">
                     <Link to="/executive/campaign" className="btn btn-outline">
@@ -859,7 +899,7 @@ export function ExecutiveInterviewSetupPage() {
                     {submitting ? 'Saving Interview Setup...' : 'Save Interview Setup'}
                   </button>
                 </div>
-              </section>
+              </div>
             </form>
           )}
         </>

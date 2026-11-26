@@ -121,13 +121,13 @@ function validatePublishForm(form) {
 
 function validateDraftForm(form) {
   const errors = {};
-  if (form.name.length > 120) {
+  if (form.name.trim().length > 120) {
     errors.name = 'Campaign name must not exceed 120 characters.';
   }
-  if (form.clubName.length > 120) {
+  if (form.clubName.trim().length > 120) {
     errors.clubName = 'Host club name must not exceed 120 characters.';
   }
-  if (form.description.length > 1000) {
+  if (form.description.trim().length > 1000) {
     errors.description = 'Campaign description must not exceed 1000 characters.';
   }
   if (form.openingDate && !isValidIsoDate(form.openingDate.trim())) {
@@ -139,15 +139,15 @@ function validateDraftForm(form) {
   if (form.interviewDate && !isValidIsoDate(form.interviewDate.trim())) {
     errors.interviewDate = 'Interview date must use YYYY-MM-DD format.';
   }
-  if (form.instructions.length > 1000) {
+  if (form.instructions.trim().length > 1000) {
     errors.instructions = 'Instructions must not exceed 1000 characters.';
   }
 
   form.positions.forEach((pos, idx) => {
-    if (pos.department.length > 80) {
+    if (pos.department.trim().length > 80) {
       errors[`positions[${idx}].department`] = 'Department must not exceed 80 characters.';
     }
-    if (pos.title.length > 100) {
+    if (pos.title.trim().length > 100) {
       errors[`positions[${idx}].title`] = 'Position title must not exceed 100 characters.';
     }
     const quotaText = String(pos.quota).trim();
@@ -157,10 +157,10 @@ function validateDraftForm(form) {
         errors[`positions[${idx}].quota`] = 'Vacancy quota must be a whole number between 1 and 50.';
       }
     }
-    if (pos.description.length > 500) {
+    if (pos.description.trim().length > 500) {
       errors[`positions[${idx}].description`] = 'Description must not exceed 500 characters.';
     }
-    if (pos.requirements.length > 500) {
+    if (pos.requirements.trim().length > 500) {
       errors[`positions[${idx}].requirements`] = 'Requirements must not exceed 500 characters.';
     }
   });
@@ -564,10 +564,17 @@ export function ExecutiveCampaignPage() {
         />
       )}
 
+      {!isLoading && !loadError && !campaign && (
+        <EmptyState
+          title="No campaign configuration available"
+          message="No campaign record was returned for this club yet."
+        />
+      )}
+
       {!isLoading && !loadError && campaign && (
         <>
           {isReadOnly && (
-            <section className="alert alert-warning" role="status" aria-label="Read-only schedule lock">
+            <div className="alert alert-warning" role="status" aria-label="Read-only schedule lock">
               <div className="alert-content">
                 <div className="alert-title">Campaign Locked (Schedule Confirmed)</div>
                 <p style={{ marginBottom: 0 }}>
@@ -577,7 +584,7 @@ export function ExecutiveCampaignPage() {
               <Link to="/executive/scheduling" className="btn btn-outline">
                 View Confirmed Schedule
               </Link>
-            </section>
+            </div>
           )}
 
           {formBanner && (
@@ -695,7 +702,9 @@ export function ExecutiveCampaignPage() {
                   placeholder="Introduce your club, activities, and what applicants can expect..."
                   aria-invalid={Boolean(fieldErrors.description)}
                   aria-describedby={
-                    fieldErrors.description ? 'campaign-description-error' : 'campaign-description-hint'
+                    fieldErrors.description
+                      ? 'campaign-description-error campaign-description-hint'
+                      : 'campaign-description-hint'
                   }
                   disabled={isReadOnly || isBusy}
                 />
@@ -795,6 +804,7 @@ export function ExecutiveCampaignPage() {
                 </div>
                 <div className="header-actions">
                   <button
+                    ref={registerFieldRef('positions')}
                     type="button"
                     className="btn btn-outline"
                     onClick={() => handleAddPosition('')}
@@ -1040,7 +1050,9 @@ export function ExecutiveCampaignPage() {
                   placeholder="1. Upload your CV in PDF format (max 5 MB)..."
                   aria-invalid={Boolean(fieldErrors.instructions)}
                   aria-describedby={
-                    fieldErrors.instructions ? 'campaign-instructions-error' : 'campaign-instructions-hint'
+                    fieldErrors.instructions
+                      ? 'campaign-instructions-error campaign-instructions-hint'
+                      : 'campaign-instructions-hint'
                   }
                   disabled={isReadOnly || isBusy}
                 />
@@ -1055,7 +1067,7 @@ export function ExecutiveCampaignPage() {
               </div>
             </section>
 
-            <section className="card action-bar-card" aria-label="Campaign actions">
+            <div className="card action-bar-card" aria-label="Campaign actions">
               <div className="action-bar">
                 <div className="header-actions">
                   <button
@@ -1083,7 +1095,7 @@ export function ExecutiveCampaignPage() {
                   {submittingAction === 'publish' ? 'Publishing Campaign...' : 'Publish Campaign'}
                 </button>
               </div>
-            </section>
+            </div>
           </form>
 
           {showPreview && (
