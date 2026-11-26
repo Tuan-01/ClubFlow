@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Recruitment Campaign · ClubFlow</title>
+<style>
+:root{--purple:#4c50ad;--purple-dark:#41469d;--soft:#f0efff;--ink:#252941;--muted:#575c70;--line:#e9eaf1;--page:#f5f5f8;--red:#ba253a;--green:#18683b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.5 Inter,"Segoe UI",Arial,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{width:min(1440px,100%);min-height:100vh;margin:auto;display:grid;grid-template-columns:224px minmax(0,1fr);background:white}
+.sidebar{min-height:100vh;padding:26px 16px 20px;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.brand{padding:4px 12px 23px;margin:0 -16px 21px 0;border-bottom:1px solid var(--line)}
+.brand-name{color:#414b91;font-size:20px;font-weight:800}
+.brand-sub{color:#6c7082;font-size:11px;margin-top:3px;font-weight:700;letter-spacing:0.5px}
+.nav-label{color:#6c7082;font-size:11px;font-weight:750;letter-spacing:1px;padding:0 12px;margin:8px 0 10px}
+.nav{display:grid;gap:6px}
+.nav a{color:#4e5369;text-decoration:none;display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:600;min-height:44px}
+.nav a:hover{background:#f0f1fa;color:#333878}
+.nav a.active{background:#eef0ff;color:#373f8a;font-weight:750}
+.nav-icon{width:18px;text-align:center;font-size:15px}
+.sidebar-bottom{margin-top:auto}
+.sidebar-bottom .nav-label{margin-top:25px}
+.logout{margin-top:20px}
+.main{min-width:0;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:70px;flex:0 0 70px;padding:0 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:18px}
+.topbar-title{font-size:16px;font-weight:750}
+.topbar-right{display:flex;align-items:center;gap:19px}
+.search{position:relative;width:260px}
+.search:before{content:"⌕";position:absolute;left:11px;top:7px;color:#6b6f80;font-size:20px}
+.search input{width:100%;padding:10px 10px 10px 34px;border:1px solid #dcdce6;border-radius:8px;font-size:13px;min-height:44px}
+.notification{border:0;background:transparent;color:var(--purple);font-size:20px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.user{display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#e9e9f8;color:var(--purple);font-size:12px;font-weight:800}
+.user-name{font-size:13px;font-weight:750}
+.user-email{color:#6c7082;font-size:11px;margin-top:2px}
+.content{width:100%;max-width:1160px;margin:auto;padding:24px 28px 24px;flex:1;display:flex;flex-direction:column;min-height:0}
+.heading-row{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:18px}
+h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.4px}
+.subtitle{margin:6px 0 0;color:var(--muted);font-size:14px}
+.draft{color:#784900;background:#fff8eb;border:1px solid #f2dbb3;border-radius:20px;padding:6px 13px;font-size:11px;font-weight:750;white-space:nowrap}
+.wizard{flex:1;min-height:0;background:white;border:1px solid #e5e5ee;border-radius:12px;box-shadow:0 2px 8px rgba(37,41,65,0.04);display:flex;flex-direction:column}
+.step-radio{position:absolute;opacity:0;pointer-events:none;width:0;height:0;margin:0}
+.progress{padding:18px 25px 16px;border-bottom:1px solid var(--line)}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.step{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer}
+.step:not(:last-child):after{content:"";height:1px;background:#dedee8;flex:1;margin:0 4px}
+.number{flex:0 0 30px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#f0f0f5;color:#5a5e72;font-size:12px;font-weight:800}
+.step-label{color:#5a5e72;font-size:12px;font-weight:650;white-space:nowrap}
+
+/* Step 1 active */
+#step-1:checked ~ .progress .step-indicator-1 .number{color:white;background:var(--purple)}
+#step-1:checked ~ .progress .step-indicator-1 .step-label{color:var(--purple);font-weight:750}
+
+/* Step 2 active */
+#step-2:checked ~ .progress .step-indicator-1 .number{color:white;background:var(--purple-dark);font-size:0}
+#step-2:checked ~ .progress .step-indicator-1 .number::before{content:"✓";font-size:12px}
+#step-2:checked ~ .progress .step-indicator-1 .step-label{color:var(--purple);font-weight:750}
+#step-2:checked ~ .progress .step-indicator-2 .number{color:white;background:var(--purple)}
+#step-2:checked ~ .progress .step-indicator-2 .step-label{color:var(--purple);font-weight:750}
+
+/* Step 3 active */
+#step-3:checked ~ .progress .step-indicator-1 .number,
+#step-3:checked ~ .progress .step-indicator-2 .number{color:white;background:var(--purple-dark);font-size:0}
+#step-3:checked ~ .progress .step-indicator-1 .number::before,
+#step-3:checked ~ .progress .step-indicator-2 .number::before{content:"✓";font-size:12px}
+#step-3:checked ~ .progress .step-indicator-1 .step-label,
+#step-3:checked ~ .progress .step-indicator-2 .step-label{color:var(--purple);font-weight:750}
+#step-3:checked ~ .progress .step-indicator-3 .number{color:white;background:var(--purple)}
+#step-3:checked ~ .progress .step-indicator-3 .step-label{color:var(--purple);font-weight:750}
+
+/* Step 4 active */
+#step-4:checked ~ .progress .step-indicator-1 .number,
+#step-4:checked ~ .progress .step-indicator-2 .number,
+#step-4:checked ~ .progress .step-indicator-3 .number{color:white;background:var(--purple-dark);font-size:0}
+#step-4:checked ~ .progress .step-indicator-1 .number::before,
+#step-4:checked ~ .progress .step-indicator-2 .number::before,
+#step-4:checked ~ .progress .step-indicator-3 .number::before{content:"✓";font-size:12px}
+#step-4:checked ~ .progress .step-indicator-1 .step-label,
+#step-4:checked ~ .progress .step-indicator-2 .step-label,
+#step-4:checked ~ .progress .step-indicator-3 .step-label{color:var(--purple);font-weight:750}
+#step-4:checked ~ .progress .step-indicator-4 .number{color:white;background:var(--purple)}
+#step-4:checked ~ .progress .step-indicator-4 .step-label{color:var(--purple);font-weight:750}
+
+.panel-wrap{flex:1;min-height:0;padding:24px 25px;display:flex;flex-direction:column}
+.panel{display:none}
+#step-1:checked ~ .panel-wrap .panel-1,
+#step-2:checked ~ .panel-wrap .panel-2,
+#step-3:checked ~ .panel-wrap .panel-3,
+#step-4:checked ~ .panel-wrap .panel-4{display:flex;flex-direction:column;flex:1;min-height:0}
+.panel-head{margin-bottom:20px}
+h2{margin:0;font-size:18px;font-weight:750}
+.description{margin:5px 0 0;color:var(--muted);font-size:13px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px}
+.field{display:grid;gap:6px;min-width:0}
+.full{grid-column:1/-1}
+label{color:#3c4255;font-size:13px;font-weight:700}
+.required{color:var(--red)}
+input,textarea,select{width:100%;border:1px solid #d5d7e3;border-radius:8px;padding:10px 12px;color:var(--ink);background:white;outline:none;font-size:14px;min-height:44px}
+input:focus,textarea:focus,select:focus{border-color:#6569c7;box-shadow:0 0 0 3px rgba(76,80,173,0.14)}
+textarea{min-height:105px;resize:vertical;line-height:1.5}
+.hint{color:#6c7082;font-size:12px;line-height:1.45}
+.date-note{margin-top:16px;padding:12px 14px;border-radius:8px;background:#f7f7fc;border:1px solid #e8e8f2;color:#494e7a;font-size:13px;line-height:1.5}
+.department{max-width:860px;padding:16px;border:1px solid #e5e5f0;border-radius:10px;background:#fbfbfe}
+.department-head,.position-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.department-name{font-size:15px;font-weight:750;color:#2a2e4a}
+.position{padding:13px;border:1px solid #e6e6f0;border-radius:8px;background:white}
+.position+.position{margin-top:11px}
+.position-head{font-size:13px;font-weight:700;margin-bottom:9px}
+.position-grid{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:12px}
+.position-grid textarea{min-height:65px}
+.link{border:0;background:transparent;color:var(--purple);padding:6px;font-size:12px;font-weight:700}
+.add{width:100%;margin-top:12px;border:1px dashed #b8b8db;color:var(--purple);background:#fbfbfe;border-radius:8px;padding:11px;font-size:13px;font-weight:700;min-height:44px}
+.add:hover{background:#f3f3fd}
+.review{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}
+.review-box{padding:15px;border:1px solid var(--line);border-radius:8px;background:#fcfcff}
+.review-box h3{margin:0 0 8px;font-size:13px;font-weight:750;color:#2a2e4a}
+.review-box p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;white-space:pre-line}
+.panel-footer{padding:18px 0 0;margin-top:auto;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.footer-left,.footer-right{display:flex;gap:10px;align-items:center}
+.btn{border:1px solid #d5d7e3;border-radius:8px;padding:10px 16px;background:white;color:#3b4055;font-size:13px;font-weight:750;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:background-color .15s;cursor:pointer;user-select:none}
+.btn:hover{background:#f4f5f9;border-color:#a5a9c4}
+.btn.primary{background:var(--purple);border-color:var(--purple);color:white}
+.btn.primary:hover{background:var(--purple-dark);border-color:var(--purple-dark)}
+.btn.preview{color:var(--purple);background:var(--soft);border-color:#dad8f7}
+.counter{color:#6c7082;font-size:13px;font-weight:600}
+.message{min-height:18px;margin-top:10px;margin-bottom:6px;color:var(--red);font-size:13px;font-weight:600}
+
+@media(max-width:850px){
+  .app{grid-template-columns:190px minmax(0,1fr)}
+  .content{padding:20px 16px}
+  .step-label{font-size:10px}
+  .progress,.panel-wrap{padding-left:18px;padding-right:18px}
+}
+@media(max-width:620px){
+  .app{display:block}
+  .sidebar{min-height:0;padding:12px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{border:0;margin:0 0 10px;padding:0 5px}
+  .nav-label,.sidebar-bottom{display:none}
+  .nav{display:flex;overflow-x:auto}
+  .nav a{white-space:nowrap;padding:9px 12px}
+  .topbar{height:60px;padding:0 14px}
+  .search,.user-email{display:none}
+  .content{padding:18px 12px}
+  .heading-row{flex-direction:column}
+  .wizard{min-height:auto}
+  .progress{padding:14px 10px}
+  .steps{gap:4px}
+  .step{flex-direction:column;gap:5px}
+  .step:not(:last-child):after{display:none}
+  .step-label{font-size:10px;white-space:normal;text-align:center}
+  .panel-wrap{padding:18px 14px}
+  .fields,.review{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .position-grid{grid-template-columns:1fr}
+  .panel-footer{padding:14px 0 0;flex-direction:column;align-items:stretch;gap:12px}
+  .footer-left,.footer-right{justify-content:space-between;width:100%}
+  .btn{flex:1;min-height:44px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-name">ClubFlow</div>
+    <div class="brand-sub">CLUB RECRUITMENT</div>
+  </div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav" aria-label="Main navigation">
+    <a href="index.html"><span class="nav-icon">▦</span>Dashboard</a>
+    <a class="active" href="index.html" aria-current="page"><span class="nav-icon">♧</span>Campaigns</a>
+    <a href="application-review.html"><span class="nav-icon">♙</span>Applications</a>
+    <a href="interview-scheduling.html"><span class="nav-icon">▣</span>Interviews</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="nav-label">ADMIN</div>
+    <nav class="nav" aria-label="Admin navigation">
+      <a href="index.html"><span class="nav-icon">⚙</span>Settings</a>
+      <a href="index.html"><span class="nav-icon">◎</span>Manage Users</a>
+      <a href="index.html"><span class="nav-icon">ⓘ</span>Help</a>
+    </nav>
+    <nav class="nav logout" aria-label="User navigation">
+      <a href="index.html"><span class="nav-icon">⇥</span>Logout</a>
+    </nav>
+  </div>
+</aside>
+<div class="main">
+<header class="topbar">
+  <div class="search">
+    <input type="search" aria-label="Search" placeholder="Search campaigns or applicants...">
+  </div>
+  <div class="topbar-right">
+    <button class="notification" type="button" aria-label="Notifications">♢</button>
+    <div class="user">
+      <div class="avatar" aria-hidden="true">EX</div>
+      <div>
+        <div class="user-name">Club Executive</div>
+        <div class="user-email">executive@clubflow.edu</div>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="content">
+  <div class="heading-row">
+    <div>
+      <h1>Create Recruitment Campaign</h1>
+      <p class="subtitle">Complete each step to prepare your club's recruitment campaign.</p>
+    </div>
+    <span class="draft">● DRAFT MODE</span>
+  </div>
+  <!-- Primary wizard form with action pointing directly to Screen 2 -->
+  <form class="wizard" id="campaign-form" action="application-review.html" method="get">
+    <!-- 4 radio toggles enabling full step navigation in pure CSS (even with JavaScript disabled) -->
+    <input type="radio" name="wizard_step" id="step-1" class="step-radio" checked aria-label="Step 1: Basic Information">
+    <input type="radio" name="wizard_step" id="step-2" class="step-radio" aria-label="Step 2: Application Period">
+    <input type="radio" name="wizard_step" id="step-3" class="step-radio" aria-label="Step 3: Departments and Positions">
+    <input type="radio" name="wizard_step" id="step-4" class="step-radio" aria-label="Step 4: Instructions">
+
+    <div class="progress">
+      <div class="steps">
+        <label for="step-1" class="step step-indicator-1" data-indicator="0"><span class="number">1</span><span class="step-label">Basic Information</span></label>
+        <label for="step-2" class="step step-indicator-2" data-indicator="1"><span class="number">2</span><span class="step-label">Application Period</span></label>
+        <label for="step-3" class="step step-indicator-3" data-indicator="2"><span class="number">3</span><span class="step-label">Departments &amp; Positions</span></label>
+        <label for="step-4" class="step step-indicator-4" data-indicator="3"><span class="number">4</span><span class="step-label">Instructions</span></label>
+      </div>
+    </div>
+    <div class="panel-wrap">
+      <!-- Step 1: Basic Information -->
+      <section class="panel panel-1" data-panel="0">
+        <div class="panel-head">
+          <h2>Basic Information</h2>
+          <p class="description">Start with the main details students will see on your campaign page.</p>
+        </div>
+        <div class="fields">
+          <div class="field full">
+            <label for="campaign-name">Campaign Name <span class="required">*</span></label>
+            <input id="campaign-name" name="campaign_name" placeholder="e.g. Member Recruitment 2026" value="Computer Science Club Recruitment 2026" required>
+          </div>
+          <div class="field full">
+            <label for="club-name">Host Club <span class="required">*</span></label>
+            <input id="club-name" name="club_name" value="Computer Science Club" required>
+          </div>
+          <div class="field full">
+            <label for="description">Campaign Description <span class="required">*</span></label>
+            <textarea id="description" name="description" placeholder="Introduce your club, its activities, and what students can expect..." required>Join our student tech community to collaborate on software projects, organize technical workshops, and connect with faculty and industry mentors.</textarea>
+            <span class="hint">Keep the description clear and welcoming to prospective applicants.</span>
+          </div>
+        </div>
+        <div class="message" role="alert" aria-live="polite"></div>
+        <div class="panel-footer">
+          <div class="footer-left">
+            <button class="btn btn-save" type="button">Save Draft</button>
+            <span class="counter">Step 1 of 4</span>
+          </div>
+          <div class="footer-right">
+            <label for="step-2" class="btn primary next-btn">Next Step →</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Application Period -->
+      <section class="panel panel-2" data-panel="1">
+        <div class="panel-head">
+          <h2>Application Period</h2>
+          <p class="description">Choose when students can submit their applications.</p>
+        </div>
+        <div class="fields">
+          <div class="field">
+            <label for="opening-date">Opening Date <span class="required">*</span></label>
+            <input id="opening-date" name="opening_date" type="date" value="2026-11-10" required>
+          </div>
+          <div class="field">
+            <label for="closing-date">Closing Date <span class="required">*</span></label>
+            <input id="closing-date" name="closing_date" type="date" value="2026-11-30" required>
+          </div>
+          <div class="field full">
+            <label for="interview-date">Interview Date <span class="required">*</span></label>
+            <input id="interview-date" name="interview_date" type="date" value="2026-12-07" required>
+          </div>
+        </div>
+        <div class="date-note">
+          <strong>Proposed application window:</strong> November 10–30, 2026. The closing date must be later than the opening date, and the interview date (Dec 07, 2026) must be later than the closing date.
+        </div>
+        <div class="message" role="alert" aria-live="polite"></div>
+        <div class="panel-footer">
+          <div class="footer-left">
+            <button class="btn btn-save" type="button">Save Draft</button>
+            <span class="counter">Step 2 of 4</span>
+          </div>
+          <div class="footer-right">
+            <label for="step-1" class="btn back-btn">← Back</label>
+            <label for="step-3" class="btn primary next-btn">Next Step →</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3: Departments & Positions -->
+      <section class="panel panel-3" data-panel="2">
+        <div class="panel-head">
+          <h2>Departments &amp; Positions</h2>
+          <p class="description">Add positions under each department, including vacancy quotas and requirements.</p>
+        </div>
+        <div class="department">
+          <div class="department-head">
+            <span class="department-name">Marketing Department</span>
+            <button class="link" type="button">Remove department</button>
+          </div>
+          <div class="position">
+            <div class="position-head">
+              <span>Social Media Executive</span>
+              <span class="hint">3 vacancies</span>
+            </div>
+            <div class="position-grid">
+              <div class="field">
+                <label for="social-requirements">Job description &amp; requirements</label>
+                <textarea id="social-requirements" name="social_requirements">Plan and draft social media posts, design visual banners, and engage with club members online.</textarea>
+              </div>
+              <div class="field">
+                <label for="social-quota">Vacancy quota</label>
+                <input id="social-quota" name="social_quota" type="number" min="1" value="3">
+              </div>
+            </div>
+          </div>
+          <div class="position">
+            <div class="position-head">
+              <span>Content Writer</span>
+              <span class="hint">2 vacancies</span>
+            </div>
+            <div class="position-grid">
+              <div class="field">
+                <label for="writer-requirements">Job description &amp; requirements</label>
+                <textarea id="writer-requirements" name="writer_requirements">Write tech articles, event recaps, and newsletter stories for the club blog.</textarea>
+              </div>
+              <div class="field">
+                <label for="writer-quota">Vacancy quota</label>
+                <input id="writer-quota" name="writer_quota" type="number" min="1" value="2">
+              </div>
+            </div>
+          </div>
+          <button class="add" type="button">＋ Add Position</button>
+        </div>
+        <button class="add" type="button" style="margin-top:14px">＋ Add Department</button>
+        <p class="hint" style="margin-top:12px">Sample setup: 1 department, 2 positions and 5 vacancies.</p>
+        <div class="message" role="alert" aria-live="polite"></div>
+        <div class="panel-footer">
+          <div class="footer-left">
+            <button class="btn btn-save" type="button">Save Draft</button>
+            <span class="counter">Step 3 of 4</span>
+          </div>
+          <div class="footer-right">
+            <label for="step-2" class="btn back-btn">← Back</label>
+            <label for="step-4" class="btn primary next-btn">Next Step →</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Application Instructions -->
+      <section class="panel panel-4" data-panel="3">
+        <div class="panel-head">
+          <h2>Application Instructions</h2>
+          <p class="description">Tell students what they need to prepare before submitting an application.</p>
+        </div>
+        <div class="field">
+          <label for="instructions">Instructions for Applicants <span class="required">*</span></label>
+          <textarea id="instructions" name="instructions" required>1. Upload your CV in PDF format (maximum 5 MB).
+2. Write a motivation statement (maximum 300 words).
+3. Select your available interview time slots for December 07, 2026.</textarea>
+          <span class="hint">The application form uses a PDF CV (maximum 5 MB), a motivation statement (maximum 300 words), and availability based on time slots provided by the club.</span>
+        </div>
+        <div class="review">
+          <div class="review-box">
+            <h3>What applicants submit</h3>
+            <p>Student information
+PDF CV (up to 5 MB)
+Motivation statement (up to 300 words)</p>
+          </div>
+          <div class="review-box">
+            <h3>Before you publish</h3>
+            <p>Check campaign details, application dates, position quotas and instructions. You can return to any previous step.</p>
+          </div>
+        </div>
+        <div class="message" role="alert" aria-live="polite"></div>
+        <div class="panel-footer">
+          <div class="footer-left">
+            <button class="btn btn-save" type="button">Save Draft</button>
+            <span class="counter">Step 4 of 4</span>
+          </div>
+          <div class="footer-right">
+            <label for="step-3" class="btn back-btn">← Back</label>
+            <button class="btn primary" id="publish" type="submit">Publish Campaign</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </form>
+</main>
+</div>
+</div>
+
+<script src="clubflow.js"></script>
+<script>
+const radios = [document.getElementById("step-1"), document.getElementById("step-2"), document.getElementById("step-3"), document.getElementById("step-4")];
+const panels = [...document.querySelectorAll(".panel")];
+const messages = [...document.querySelectorAll(".message")];
+
+function getCurrentStep() {
+  const checked = document.querySelector(".step-radio:checked");
+  return checked ? radios.indexOf(checked) : 0;
+}
+
+function goToStep(n) {
+  if (n >= 0 && n < radios.length) {
+    radios[n].checked = true;
+  }
+}
+
+function setMessage(text, isError) {
+  messages.forEach(m => {
+    m.textContent = text;
+    m.style.color = isError ? "var(--red)" : "var(--green)";
+  });
+}
+
+function validate(n) {
+  const required = panels[n].querySelectorAll("[required]");
+  for (const field of required) {
+    if (!field.value.trim()) {
+      setMessage("Please complete the required fields before continuing.", true);
+      field.focus();
+      return false;
+    }
+  }
+  if (n === 1) {
+    const start = document.getElementById("opening-date").value, end = document.getElementById("closing-date").value;
+    if (!start || !end || end <= start) {
+      setMessage("The closing date must be later than the opening date.", true);
+      document.getElementById("closing-date").focus();
+      return false;
+    }
+    if (document.getElementById("interview-date").value <= end) {
+      setMessage("The interview date must be later than the closing date.", true);
+      document.getElementById("interview-date").focus();
+      return false;
+    }
+  }
+  setMessage("", false);
+  return true;
+}
+
+// Validate when advancing via Next Step button
+document.querySelectorAll(".next-btn").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    const cur = getCurrentStep();
+    if (!validate(cur)) {
+      e.preventDefault();
+    }
+  });
+});
+
+// Validate when jumping ahead in stepper
+document.querySelectorAll(".steps .step").forEach((lbl, idx) => {
+  lbl.addEventListener("click", (e) => {
+    const cur = getCurrentStep();
+    if (idx > cur && !validate(cur)) {
+      e.preventDefault();
+    }
+  });
+});
+
+const ids = ["campaign-name","club-name","description","opening-date","closing-date","interview-date","instructions","social-requirements","social-quota","writer-requirements","writer-quota"];
+const el = i => document.getElementById(i), collect = () => { const o = {}; ids.forEach(i => o[i] = el(i) ? el(i).value : ""); return o; };
+const saved = CF.campaign(), fill = o => { if (o) ids.forEach(i => { if (o[i] !== undefined && el(i)) el(i).value = o[i]; }); };
+fill(saved ? saved.form : CF.read(CF.K.draft));
+
+document.querySelector(".draft").textContent = saved ? (CF.confirmed() ? "● CONFIRMED" : "● PUBLISHED") : "● DRAFT MODE";
+
+document.querySelectorAll(".btn-save").forEach(btn => {
+  btn.addEventListener("click", () => {
+    CF.write(CF.K.draft, collect());
+    setMessage("Draft saved in this browser.", false);
+  });
+});
+
+const publish = document.getElementById("publish");
+publish.addEventListener("click", (e) => {
+  for (let i = 0; i < panels.length; i++) {
+    if (!validate(i)) {
+      e.preventDefault();
+      goToStep(i);
+      validate(i);
+      return;
+    }
+  }
+  const f = collect(), prev = CF.read(CF.K.campaign);
+  const pos = (t, k) => ({ title: t, dept: "Marketing Department", quota: Math.max(1, +f[k + "-quota"] || 1), req: f[k + "-requirements"] });
+  const c = {
+    name: f["campaign-name"].trim(),
+    club: f["club-name"].trim(),
+    description: f.description,
+    opening: f["opening-date"],
+    closing: f["closing-date"],
+    interview: f["interview-date"],
+    instructions: f.instructions,
+    positions: [pos("Social Media Executive", "social"), pos("Content Writer", "writer")],
+    form: f,
+    published: true,
+    publishedAt: prev ? prev.publishedAt : new Date().toISOString(),
+    closedEarly: prev ? !!prev.closedEarly : false
+  };
+  if (!prev) {
+    [CF.K.apps, CF.K.sched].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  }
+  CF.write(CF.K.campaign, c);
+});
+
+if (CF.confirmed()) {
+  document.querySelectorAll("#campaign-form input,#campaign-form textarea").forEach(e => e.disabled = true);
+  document.querySelectorAll(".btn-save").forEach(btn => btn.disabled = true);
+  publish.disabled = true;
+  setMessage("The interview schedule is confirmed, so the campaign is read-only.", false);
+}
+</script>
+</body>
+</html>

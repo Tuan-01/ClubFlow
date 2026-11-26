@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview Scheduling · ClubFlow</title>
+<script src="clubflow.js"></script>
+<style>
+:root{--bg:#fbfbfd;--surface:#fff;--ink:#2b2d4a;--muted:#6b6f8a;--line:#e6e7f0;--accent:#4a4fa3;--accent-soft:#ecedfb;
+--ok:#1b7a3e;--ok-bg:#e3f4ea;--no:#b3263e;--no-bg:#fbe6ea;--wait:#7a4f00;--wait-bg:#fff1d6;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 "Nunito Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:100vh}
+.side{background:#fff;border-right:1px solid var(--line);padding:24px 20px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.brand b{display:block;font-size:22px;font-weight:800;line-height:1.2}
+.brand small{font-size:12px;color:var(--muted);letter-spacing:.4px}
+.side .side-label{margin:0 0 8px 6px;font-size:11.5px;letter-spacing:1.2px;color:#6b6f8a;font-weight:700}
+.side nav{display:flex;flex-direction:column;gap:4px;margin-bottom:auto}
+.side a,.side button.lnk{display:flex;align-items:center;padding:10px 14px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600;background:none;border:0;text-align:left;width:100%;min-height:44px}
+.side a:hover,.side button.lnk:hover{background:#f5f5fb}
+.side a[aria-current]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.acct{margin-top:28px;display:flex;flex-direction:column;gap:4px}
+.bar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:14px 28px;position:sticky;top:0;z-index:5}
+.bar strong{font-size:18px;font-weight:800}
+.me{display:flex;align-items:center;gap:10px;margin-left:auto}
+.av{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:14px}
+.me div{line-height:1.25;font-size:14px;font-weight:700}.me small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+main{padding:24px 28px 40px}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:6px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+h1{margin:0;font-size:28px;font-weight:800;line-height:1.2;display:inline}
+.sub{margin:4px 0 0;color:var(--muted);font-size:14px}
+.btn{border:1px solid #d9dbe8;background:var(--surface);padding:8px 14px;border-radius:8px;font-weight:600;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{background:#e6e7f0;border-color:#e6e7f0;color:#6b6f8a;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.hint{font-size:12.5px;color:var(--muted);margin:4px 0 0;text-align:right}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.p-proposed{background:var(--accent-soft);color:#3b3f8f}.p-conflict{background:var(--no-bg);color:#a01f36}
+.p-unassigned,.p-draft{background:var(--wait-bg);color:var(--wait)}.p-confirmed{background:var(--ok-bg);color:var(--ok)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 10px;font-size:17px;font-weight:750}
+.banner{background:var(--ok-bg);color:var(--ok);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-weight:600}
+.banner[hidden]{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted)}
+label.f input,label.f select{display:block;width:100%;margin-top:4px;border:1px solid #d9dbe8;border-radius:8px;padding:8px 10px;background:#fff;min-height:44px;color:var(--ink)}
+label.f input[readonly]{background:#f5f5fb}
+.rooms{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}.rooms label{display:flex;gap:6px;align-items:center;color:var(--ink);font-weight:600}
+details{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}summary{font-weight:700;cursor:pointer}
+.ints{display:grid;grid-template-columns:minmax(120px,1.3fr) minmax(120px,1.4fr) auto auto;gap:8px 12px;align-items:center;margin-top:10px;font-size:14px}
+.ints label{display:block;width:100%}
+.ints input{border:1px solid #d9dbe8;border-radius:8px;padding:6px 8px;min-height:44px;width:100%}
+.ints b{font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.stat strong{display:block;font-size:26px;line-height:1.1;font-weight:800}.stat small{color:var(--muted);font-weight:600}
+.s-p{border-left-color:var(--accent)}.s-c{border-left-color:var(--no)}.s-u{border-left-color:#c58a00}
+.issue{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.issue:first-of-type{border-top:0}.issue p{margin:4px 0 0;font-size:14px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.layout.open{grid-template-columns:minmax(0,1fr) minmax(340px,420px)}
+.tbl{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tr{display:grid;grid-template-columns:1.5fr 1.1fr 1fr 1.3fr .9fr .9fr 1fr;gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:14px}
+.tr.th{border-top:0;color:var(--muted);font-size:13px;font-weight:700}
+.tr.bad{background:#fff5f6}.tr.sel{box-shadow:inset 3px 0 0 var(--accent)}
+.tr small{display:block;color:var(--muted)}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;color:var(--muted);font-size:13px;gap:10px;flex-wrap:wrap}
+#drawer{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);position:sticky;top:84px;display:flex;flex-direction:column;gap:12px;padding:16px}
+#drawer[hidden]{display:none}
+.dh{display:flex;justify-content:space-between;gap:8px}.dh h2{margin:0;font-size:18px}.x{border:0;background:none;font-size:24px;line-height:1;color:var(--muted);min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.msg{border-radius:8px;padding:10px 12px;font-size:13.5px}.msg.ok{background:var(--ok-bg);color:var(--ok)}.msg.bad{background:var(--no-bg);color:#a01f36}
+.msg ul{margin:4px 0 0;padding-left:18px}
+dialog{border:1px solid var(--line);border-radius:var(--r);padding:24px;max-width:520px;width:calc(100% - 32px);color:var(--ink)}
+dialog::backdrop{background:rgba(43,45,74,.45)}
+dialog h2{margin:0 0 4px;font-size:20px}
+.chk{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.chk i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-weight:800;font-size:13px;flex:none}
+.chk i.y{background:var(--ok)}.chk i.n{background:var(--no)}
+.dfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:14px;z-index:20}
+.toast[hidden]{display:none}
+@media (max-width:1100px){.layout.open{grid-template-columns:minmax(0,1fr)}.layout.open #main-col{display:block}#drawer{position:static;margin-top:16px}}
+@media (max-width:900px){
+ .shell{grid-template-columns:minmax(0,1fr)}
+ .side{position:static;height:auto;padding:14px 16px}.brand{padding-bottom:10px;margin-bottom:10px}
+ .side nav{flex-direction:row;flex-wrap:wrap;margin-bottom:0}.side .side-label,.acct{display:none}
+ .bar{position:static;padding:12px 16px}main{padding:16px 16px 110px}
+ .cta{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;z-index:6}
+ .cta .actions{justify-content:stretch}.cta .actions .btn{flex:1}.hint{text-align:left}
+ .tr.th{display:none}
+ .tr{display:block;margin:10px;border:1px solid var(--line);border-radius:12px;padding:12px}
+ .tr>*{display:flex;justify-content:space-between;gap:10px;padding:2px 0}
+ .tr>[data-l]::before{content:attr(data-l);color:var(--muted);font-size:13px}
+ .ints{grid-template-columns:1fr 1fr}.ints b:nth-child(n+3){display:none}.ints span:nth-child(4n+2){grid-column:1/-1}
+}
+
+@media (min-width:901px){
+ .shell{height:100vh;overflow:hidden}
+ .col{display:flex;flex-direction:column;min-height:0;height:100vh}
+ .bar{position:static;padding:10px 24px}
+ main{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:14px 24px 12px}
+ .crumbs{display:none}
+ .head{margin-bottom:10px;align-items:center}
+ h1{font-size:24px}.sub{margin:0;font-size:13px}.hint{margin:2px 0 0}
+ .banner{padding:8px 14px;margin-bottom:10px}
+ #settings{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;position:relative;padding:10px 14px;margin-bottom:10px}
+ #settings .grid{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;flex:1}
+ #settings label.f{width:128px}
+ #settings label.f input,#settings label.f select{min-height:36px;padding:6px 8px}
+ #settings .rooms{margin-top:4px;min-height:36px;align-items:center}
+ #settings details{margin:0;padding:0;border:0}
+ #settings summary{list-style:none;display:inline-block}
+ #settings summary::-webkit-details-marker{display:none}
+ #settings .ints{position:absolute;top:calc(100% + 6px);right:0;z-index:8;width:min(620px,92vw);background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:0 8px 24px rgba(43,45,74,.16)}
+ .stats{display:flex;gap:10px;margin-bottom:10px}
+ .stat{display:flex;align-items:baseline;gap:8px;padding:6px 14px}.stat strong{font-size:20px}
+ #issues{max-height:104px;overflow:auto;padding:8px 14px;margin-bottom:10px}
+ #issues h2{font-size:14px;margin:0 0 2px}.issue{padding:6px 0}
+ .layout{flex:1;min-height:0;grid-template-rows:minmax(0,1fr);align-items:stretch}
+ #main-col{display:flex;flex-direction:column;min-height:0}
+ .tbl{flex:1;min-height:0;overflow:auto}
+ .tr.th{position:sticky;top:0;background:#fff;z-index:1}
+ .foot{margin-top:6px}
+ #drawer{position:static;overflow:auto;min-height:0}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+ <div class="brand"><b>ClubFlow</b><small>CLUB RECRUITMENT</small></div>
+ <div class="side-label">WORKSPACE</div>
+ <nav aria-label="Main"><a href="index.html">Campaigns</a><a href="application-review.html">Applications</a><a href="interview-scheduling.html" aria-current="page">Interviews</a></nav>
+ <div class="acct"><a href="#">Help</a><button class="lnk" id="reset" type="button">Reset demo data</button><a href="#">Log out</a></div>
+</aside>
+<div class="col">
+<header class="bar"><strong id="cName">Computer Science Club Recruitment 2026</strong><div class="me"><div class="av">MA</div><div>Minh Anh<small>Executive</small></div></div></header>
+<main>
+ <div class="crumbs">Recruitment Campaigns › <span id="cName2">Computer Science Club Recruitment 2026</span> › Interview Scheduling</div>
+ <div class="head">
+  <div>
+   <h1>Interview Scheduling</h1> <span class="pill p-draft" id="chip">Draft</span>
+   <p class="sub" id="cSub">Computer Science Club · Interview date Dec 07, 2026 · Applications closed Nov 30, 2026</p>
+  </div>
+  <div class="cta">
+   <div class="actions"><button class="btn" id="csv" type="button">Export Timetable</button><button class="btn primary" id="approve" type="button">Approve &amp; Confirm Schedule</button></div>
+   <p class="hint" id="hint">1 interview in conflict</p>
+  </div>
+ </div>
+ <div class="banner" id="banner" hidden>Schedule confirmed. Applicants and interviewers can now see their own interviews, and this page is read-only.</div>
+
+ <section class="card" id="settings" aria-label="Schedule settings">
+  <h2>Automated Scheduling Parameters</h2>
+  <div class="grid">
+   <label class="f" for="idate">Interview date<input id="idate" value="Dec 07, 2026" readonly></label>
+   <label class="f" for="ws">Window starts<input type="time" id="ws" value="09:00"></label>
+   <label class="f" for="we">Window ends<input type="time" id="we" value="12:00"></label>
+   <label class="f" for="dur">Slot length<select id="dur"><option value="15">15 minutes</option><option value="20" selected>20 minutes</option><option value="30">30 minutes</option></select></label>
+   <div class="f" style="font-size:13px;font-weight:600;color:var(--muted)">Rooms<div class="rooms" id="rooms">
+    <label><input type="checkbox" data-room="A" checked> Room A</label>
+    <label><input type="checkbox" data-room="B" checked> Room B</label>
+    <label><input type="checkbox" data-room="C" checked> Room C</label>
+   </div></div>
+  </div>
+  <button class="btn primary" id="gen" type="button">Generate Draft</button>
+  <details><summary class="btn">Interviewers &amp; availability</summary><div class="ints" id="ints">
+    <b>Interviewer</b><b>Positions</b><b>From</b><b>To</b>
+    <span>Phan Quang Dũng</span><span>Social</span><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Phan Quang Dũng available from</span><input type="time" data-i="0" data-k="from" value="09:00" aria-label="Phan Quang Dũng available from"></label><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Phan Quang Dũng available until</span><input type="time" data-i="0" data-k="to" value="11:00" aria-label="Phan Quang Dũng available until"></label>
+    <span>Cao Thị Hạnh</span><span>Social, Content</span><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Cao Thị Hạnh available from</span><input type="time" data-i="1" data-k="from" value="09:00" aria-label="Cao Thị Hạnh available from"></label><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Cao Thị Hạnh available until</span><input type="time" data-i="1" data-k="to" value="12:00" aria-label="Cao Thị Hạnh available until"></label>
+    <span>Ngô Văn Lộc</span><span>Content</span><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Ngô Văn Lộc available from</span><input type="time" data-i="2" data-k="from" value="09:40" aria-label="Ngô Văn Lộc available from"></label><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Ngô Văn Lộc available until</span><input type="time" data-i="2" data-k="to" value="12:00" aria-label="Ngô Văn Lộc available until"></label>
+  </div></details>
+ </section>
+
+ <section class="stats" id="stats" aria-label="Summary">
+   <div class="stat"><strong>8</strong><small>Shortlisted</small></div>
+   <div class="stat s-p"><strong>6</strong><small>Proposed</small></div>
+   <div class="stat s-c"><strong>1</strong><small>Conflict</small></div>
+   <div class="stat s-u"><strong>1</strong><small>Unassigned</small></div>
+ </section>
+ <section class="card" id="issues" aria-label="Needs attention">
+   <h2>Needs attention (2)</h2>
+   <div class="issue">
+     <div><span class="pill p-conflict">Conflict</span><p><b>Lê Thu Hà</b> (A03, Content Writer, 09:20–09:40): Cao Thị Hạnh is already interviewing Nguyễn Minh Anh (A02) at this time.</p></div>
+     <button class="btn" type="button" data-id="A03">Resolve</button>
+   </div>
+   <div class="issue">
+     <div><span class="pill p-unassigned">Unassigned</span><p><b>Đỗ Đức Thắng</b> (A05, Content Writer): Qualified interviewers are fully booked, or no room is free when they are available.</p></div>
+     <button class="btn" type="button" data-id="A05">+ Assign Slot</button>
+   </div>
+ </section>
+
+ <div class="layout" id="layout">
+  <div id="main-col">
+   <div class="tbl" id="tbl" role="table" aria-label="Interview schedule">
+     <div class="tr th" role="row"><span>Applicant</span><span>Position</span><span>Time</span><span>Interviewer</span><span>Room</span><span>Status</span><span></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Nguyễn Hoàng Triệu Khánh Linh</b><small>S20241001 · A01</small></span></span><span data-l="Position">Social Media</span><span data-l="Time">09:00–09:20</span><span data-l="Interviewer">Phan Quang Dũng</span><span data-l="Room">Room A</span><span data-l="Status"><span class="pill p-proposed">Proposed</span></span><span><button class="btn" type="button" data-id="A01">Edit</button></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Nguyễn Minh Anh</b><small>S20241088 · A02</small></span></span><span data-l="Position">Social Media</span><span data-l="Time">09:20–09:40</span><span data-l="Interviewer">Cao Thị Hạnh</span><span data-l="Room">Room A</span><span data-l="Status"><span class="pill p-proposed">Proposed</span></span><span><button class="btn" type="button" data-id="A02">Edit</button></span></div>
+     <div class="tr bad" role="row"><span data-l="Applicant"><span><b>Lê Thu Hà</b><small>S20240954 · A03</small></span></span><span data-l="Position">Content Writer</span><span data-l="Time">09:20–09:40</span><span data-l="Interviewer">Cao Thị Hạnh ⚠️</span><span data-l="Room">Room B</span><span data-l="Status"><span class="pill p-conflict">Conflict</span></span><span><button class="btn" type="button" data-id="A03">Resolve</button></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Phạm Quốc Bảo</b><small>S20241280 · A04</small></span></span><span data-l="Position">Social Media</span><span data-l="Time">09:40–10:00</span><span data-l="Interviewer">Phan Quang Dũng</span><span data-l="Room">Room A</span><span data-l="Status"><span class="pill p-proposed">Proposed</span></span><span><button class="btn" type="button" data-id="A04">Edit</button></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Đỗ Đức Thắng</b><small>S20240741 · A05</small></span></span><span data-l="Position">Content Writer</span><span data-l="Time">—</span><span data-l="Interviewer">—</span><span data-l="Room">—</span><span data-l="Status"><span class="pill p-unassigned">Unassigned</span></span><span><button class="btn" type="button" data-id="A05">+ Assign Slot</button></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Vũ Mai Linh</b><small>S20240512 · A06</small></span></span><span data-l="Position">Content Writer</span><span data-l="Time">10:00–10:20</span><span data-l="Interviewer">Ngô Văn Lộc</span><span data-l="Room">Room B</span><span data-l="Status"><span class="pill p-proposed">Proposed</span></span><span><button class="btn" type="button" data-id="A06">Edit</button></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Bùi Quang Khải</b><small>S20240321 · A07</small></span></span><span data-l="Position">Social Media</span><span data-l="Time">10:20–10:40</span><span data-l="Interviewer">Phan Quang Dũng</span><span data-l="Room">Room A</span><span data-l="Status"><span class="pill p-proposed">Proposed</span></span><span><button class="btn" type="button" data-id="A07">Edit</button></span></div>
+     <div class="tr" role="row"><span data-l="Applicant"><span><b>Đặng Ngọc Trâm</b><small>S20241415 · A08</small></span></span><span data-l="Position">Social Media</span><span data-l="Time">10:40–11:00</span><span data-l="Interviewer">Phan Quang Dũng</span><span data-l="Room">Room A</span><span data-l="Status"><span class="pill p-proposed">Proposed</span></span><span><button class="btn" type="button" data-id="A08">Edit</button></span></div>
+   </div>
+   <footer class="foot"><span id="count">Showing 8 shortlisted applications</span><button class="btn" id="save" type="button">Save Changes</button></footer>
+  </div>
+  <aside id="drawer" hidden aria-label="Edit assignment">
+   <div class="dh"><div><h2>Edit assignment</h2><div class="sub" id="eWho"></div></div><button class="x" id="eClose" aria-label="Close" type="button">×</button></div>
+   <label class="f" for="eInt">Interviewer<select id="eInt"></select></label>
+   <label class="f" for="eTime">Time slot<select id="eTime"></select></label>
+   <label class="f" for="eRoom">Room<select id="eRoom"></select></label>
+   <div class="msg" id="eMsg" role="status"></div>
+   <div class="dialogbtns" style="display:flex;gap:8px"><button class="btn" id="eCancel" type="button">Cancel</button><button class="btn primary" id="eApply" type="button">Apply Change</button></div>
+  </aside>
+ </div>
+</main>
+</div>
+</div>
+<dialog id="dlg" aria-labelledby="dT"><h2 id="dT">Approve and confirm schedule?</h2><p class="sub">After confirming, the campaign and schedule become read-only.</p><div id="dList"></div>
+ <div class="dfoot"><button class="btn" id="dBack" type="button">Back to schedule</button><button class="btn primary" id="dOk" type="button">Confirm Schedule</button></div></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+var fallbackCampaign = {
+  name: "Computer Science Club Recruitment 2026",
+  club: "Computer Science Club",
+  opening: "2026-11-10",
+  closing: "2026-11-30",
+  interview: "2026-12-07",
+  positions: [{title: "Social Media Executive"}, {title: "Content Writer"}],
+  published: true
+};
+var C = CF.campaign() || fallbackCampaign;
+var POS = CF.posMap(C), L = C.positions.length;
+var APPS = [
+  ["A01","Nguyễn Hoàng Triệu Khánh Linh","S20241001",0],
+  ["A02","Nguyễn Minh Anh","S20241088",0],
+  ["A03","Lê Thu Hà","S20240954",1],
+  ["A04","Phạm Quốc Bảo","S20241280",0],
+  ["A05","Đỗ Đức Thắng","S20240741",1],
+  ["A06","Vũ Mai Linh","S20240512",1],
+  ["A07","Bùi Quang Khải","S20240321",0],
+  ["A08","Đặng Ngọc Trâm","S20241415",0],
+  ["A09","Trương Hoài Nam","S20241190",1],
+  ["A10","Lý Bảo Châu","S20240876",0],
+  ["A11","Hồ Thanh Tùng","S20241333",0],
+  ["A12","Võ Minh Trí","S20241550",1]
+];
+APPS.forEach(function(a){ a[3] = String(a[3] % L); });
+
+var DEF = {
+  A01: "Shortlisted", A02: "Shortlisted", A03: "Shortlisted", A04: "Shortlisted",
+  A05: "Shortlisted", A06: "Shortlisted", A07: "Shortlisted", A08: "Shortlisted",
+  A09: "Pending", A10: "Pending", A11: "Rejected", A12: "Rejected"
+};
+
+var INT = [
+  {n: "Phan Quang Dũng", pos: "0", from: "09:00", to: "11:00"},
+  {n: "Cao Thị Hạnh", pos: "01", from: "09:00", to: "12:00"},
+  {n: "Ngô Văn Lộc", pos: "1", from: "09:40", to: "12:00"}
+];
+
+var AK = CF.K.apps || "clubflow.applications.v1", SK = CF.K.sched || "clubflow.schedule.v1";
+var $ = function(i){ return document.getElementById(i); };
+var st = { dur: 20, ws: "09:00", we: "12:00", rooms: {A: 1, B: 1, C: 1}, rows: [], confirmed: false, drafted: false, sel: null };
+
+function tm(s){ var p = s.split(":"); return +p[0] * 60 + +p[1]; }
+function fm(m){ return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); }
+function rng(s){ return fm(s) + "–" + fm(s + st.dur); }
+function toast(m){ var t = $("toast"); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function(){ t.hidden = true; }, 2200); }
+
+function statuses(){
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem(AK)) || {}; } catch(e){}
+  if (Array.isArray(s)) {
+    var map = {};
+    s.forEach(function(a){ map[a.id] = a.status; });
+    s = map;
+  }
+  var o = {};
+  APPS.forEach(function(a){ o[a[0]] = s[a[0]] ? (s[a[0]].status || s[a[0]]) : (DEF[a[0]] || "Pending"); });
+  return o;
+}
+
+var DEFAULT_SCHEDULE = {
+  A01: {start: 540, int: 0, room: "A"},
+  A02: {start: 560, int: 1, room: "A"},
+  A03: {start: 560, int: 1, room: "B"},
+  A04: {start: 580, int: 0, room: "A"},
+  A05: {start: null, int: 0, room: "A"},
+  A06: {start: 600, int: 2, room: "B"},
+  A07: {start: 620, int: 0, room: "A"},
+  A08: {start: 640, int: 0, room: "A"}
+};
+
+function load(){
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(SK)); } catch(e){}
+  var ss = statuses(), old = {};
+  if (saved) {
+    ["dur", "ws", "we", "rooms", "confirmed", "drafted"].forEach(function(k){ if (saved[k] !== undefined) st[k] = saved[k]; });
+    (saved.avail || []).forEach(function(v, i){ if (INT[i]) { INT[i].from = v[0]; INT[i].to = v[1]; } });
+    (saved.rows || []).forEach(function(r){ old[r.id] = r; });
+  } else {
+    old = DEFAULT_SCHEDULE;
+  }
+  st.rows = APPS.filter(function(a){ return ss[a[0]] === "Shortlisted"; }).map(function(a){
+    var o = old[a[0]] || {};
+    return {
+      id: a[0], name: a[1], sid: a[2], pos: a[3],
+      start: o.start == null ? null : o.start,
+      int: o.int == null ? 0 : o.int,
+      room: o.room || "A",
+      reason: ""
+    };
+  });
+  st.rows.forEach(function(r){ if (r.start == null) r.reason = why(r); });
+}
+
+function save(){
+  try {
+    localStorage.setItem(SK, JSON.stringify({
+      dur: st.dur, ws: st.ws, we: st.we, rooms: st.rooms, confirmed: st.confirmed, drafted: st.drafted,
+      avail: INT.map(function(i){ return [i.from, i.to]; }),
+      rows: st.rows.map(function(r){ return {id: r.id, start: r.start, int: r.int, room: r.room}; })
+    }));
+  } catch(e){}
+}
+
+function slots(){ var a = [], s = tm(st.ws), e = tm(st.we); for(; s + st.dur <= e; s += st.dur) a.push(s); return a; }
+function activeRooms(){ return ["A","B","C"].filter(function(r){ return st.rooms[r]; }); }
+
+function problems(r){
+  if (r.start == null) return [];
+  var p = [], it = INT[r.int];
+  if (it.pos.indexOf(r.pos) < 0) p.push(it.n + " is not assigned to " + POS[r.pos] + ".");
+  if (r.start < tm(it.from) || r.start + st.dur > tm(it.to)) p.push(it.n + " is not available at " + rng(r.start) + ".");
+  if (!st.rooms[r.room]) p.push("Room " + r.room + " is not in the active room list.");
+  st.rows.forEach(function(o){
+    if (o === r || o.start == null || !(o.start < r.start + st.dur && r.start < o.start + st.dur)) return;
+    if (o.sid === r.sid) p.push("Same student has " + o.id + " (" + POS[o.pos] + ") at " + rng(o.start) + ".");
+    if (o.int === r.int && o.id < r.id) p.push(it.n + " is already interviewing " + o.name + " (" + o.id + ") at this time.");
+    if (o.room === r.room && o.id < r.id) p.push("Room " + r.room + " is already used by " + o.id + " at this time.");
+  });
+  return p;
+}
+
+function status(r){ return r.start == null ? "Unassigned" : st.confirmed ? "Confirmed" : problems(r).length ? "Conflict" : "Proposed"; }
+
+function why(r){
+  var q = INT.map(function(_, i){ return i; }).filter(function(i){ return INT[i].pos.indexOf(r.pos) > -1; });
+  if (!q.length) return "No interviewer is assigned to " + POS[r.pos] + ".";
+  if (!st.drafted && r.start == null) return "Qualified interviewers are fully booked, or no room is free when they are available.";
+  var av = q.filter(function(i){ return slots().some(function(s){ return s >= tm(INT[i].from) && s + st.dur <= tm(INT[i].to); }); });
+  if (!av.length) return "No qualified interviewer is available in the time window.";
+  return activeRooms().length ? "Qualified interviewers are fully booked, or no room is free when they are available." : "No room is selected.";
+}
+
+function generate(){
+  st.drafted = true;
+  st.rows.forEach(function(r){ r.start = null; });
+  slots().forEach(function(s){
+    activeRooms().forEach(function(room){
+      INT.forEach(function(it, i){
+        if (s < tm(it.from) || s + st.dur > tm(it.to)) return;
+        var r = st.rows.find(function(x){
+          return x.start == null && it.pos.indexOf(x.pos) > -1 &&
+            !st.rows.some(function(o){ return o.start === s && (o.int === i || o.room === room || o.sid === x.sid); });
+        });
+        if (r) { r.start = s; r.int = i; r.room = room; }
+      });
+    });
+  });
+  st.rows.forEach(function(r){ r.reason = r.start == null ? why(r) : ""; });
+}
+
+function render(){
+  var rows = st.rows, c = {Proposed: 0, Conflict: 0, Unassigned: 0, Confirmed: 0};
+  rows.forEach(function(r){ c[status(r)]++; });
+  var ok = c.Proposed + c.Confirmed;
+  $("stats").innerHTML = '<div class="stat"><strong>' + rows.length + '</strong><small>Shortlisted</small></div><div class="stat s-p"><strong>' + ok + '</strong><small>' + (st.confirmed ? "Confirmed" : "Proposed") + '</small></div><div class="stat s-c"><strong>' + c.Conflict + '</strong><small>Conflict</small></div><div class="stat s-u"><strong>' + c.Unassigned + '</strong><small>Unassigned</small></div>';
+  var iss = [];
+  rows.forEach(function(r){
+    var s = status(r);
+    if (s === "Conflict") iss.push('<div class="issue"><div><span class="pill p-conflict">Conflict</span><p><b>' + r.name + '</b> (' + r.id + ', ' + POS[r.pos] + ', ' + rng(r.start) + '): ' + problems(r).join(" ") + '</p></div><button class="btn" type="button" data-id="' + r.id + '">Resolve</button></div>');
+    if (s === "Unassigned") iss.push('<div class="issue"><div><span class="pill p-unassigned">Unassigned</span><p><b>' + r.name + '</b> (' + r.id + ', ' + POS[r.pos] + '): ' + (r.reason || why(r)) + '</p></div>' + (st.confirmed ? '' : '<button class="btn" type="button" data-id="' + r.id + '">+ Assign Slot</button>') + '</div>');
+  });
+  $("issues").hidden = !iss.length;
+  $("issues").innerHTML = '<h2>Needs attention (' + iss.length + ')</h2>' + iss.join("");
+
+  var h = '<div class="tr th" role="row"><span>Applicant</span><span>Position</span><span>Time</span><span>Interviewer</span><span>Room</span><span>Status</span><span></span></div>';
+  h += rows.length ? rows.map(function(r){
+    var s = status(r), a = r.start != null;
+    return '<div class="tr' + (s === "Conflict" ? " bad" : "") + (st.sel == r.id ? " sel" : "") + '" role="row">' +
+      '<span data-l="Applicant"><span><b>' + r.name + '</b><small>' + r.sid + ' · ' + r.id + '</small></span></span>' +
+      '<span data-l="Position">' + POS[r.pos].replace(" Specialist","").replace(" Coordinator","").replace(" Designer","").replace(" Executive","") + '</span>' +
+      '<span data-l="Time">' + (a ? rng(r.start) : "—") + '</span>' +
+      '<span data-l="Interviewer">' + (a ? (INT[r.int].n + (s === "Conflict" ? " ⚠️" : "")) : "—") + '</span>' +
+      '<span data-l="Room">' + (a ? "Room " + r.room : "—") + '</span>' +
+      '<span data-l="Status"><span class="pill p-' + s.toLowerCase() + '">' + s + '</span></span>' +
+      '<span>' + (st.confirmed ? "" : '<button class="btn" type="button" data-id="' + r.id + '">' + (s === "Unassigned" ? "+ Assign Slot" : s === "Conflict" ? "Resolve" : "Edit") + '</button>') + '</span>' +
+    '</div>';
+  }).join("") : '<div class="empty">No shortlisted applications yet. Shortlist at least one on <a href="application-review.html">Application Review</a>.</div>';
+
+  $("tbl").innerHTML = h;
+  $("count").textContent = "Showing " + rows.length + " shortlisted application" + (rows.length === 1 ? "" : "s");
+  var pend = APPS.filter(function(a){ return statuses()[a[0]] === "Pending"; }).length, items = checks(pend);
+  var bad = items.filter(function(i){ return !i[0]; });
+  $("hint").textContent = st.confirmed ? "Schedule is confirmed." : bad.length ? bad[0][1] : "Ready to confirm.";
+  $("chip").textContent = st.confirmed ? "Confirmed" : "Draft";
+  $("chip").className = "pill " + (st.confirmed ? "p-confirmed" : "p-draft");
+  $("banner").hidden = !st.confirmed;
+  $("approve").disabled = st.confirmed || !rows.length;
+  $("approve").textContent = st.confirmed ? "Confirmed" : "Approve & Confirm Schedule";
+  $("gen").textContent = st.drafted ? "Regenerate" : "Generate Draft";
+  ["gen","save","ws","we","dur"].forEach(function(i){ $(i).disabled = st.confirmed; });
+  document.querySelectorAll("#rooms input,#ints input").forEach(function(e){ e.disabled = st.confirmed; });
+}
+
+function checks(pend){
+  var un = 0, cf = 0;
+  st.rows.forEach(function(r){ var s = status(r); if (s === "Unassigned") un++; if (s === "Conflict") cf++; });
+  return [
+    [true, "Applications closed (Nov 30, 2026)"],
+    [pend === 0, pend ? pend + " application" + (pend > 1 ? "s" : "") + " still pending review" : "All applications reviewed"],
+    [st.rows.length > 0 && un === 0, un ? un + " shortlisted application" + (un > 1 ? "s" : "") + " without an interview" : (st.rows.length ? "Every shortlisted application has an interview" : "No shortlisted applications")],
+    [cf === 0, cf ? cf + " interview" + (cf > 1 ? "s" : "") + " in conflict" : "No conflicts remain"]
+  ];
+}
+
+function buildSettings(){
+  $("rooms").innerHTML = ["A","B","C"].map(function(r){ return '<label><input type="checkbox" data-room="' + r + '"' + (st.rooms[r] ? " checked" : "") + '> Room ' + r + '</label>'; }).join("");
+  $("ints").innerHTML = '<b>Interviewer</b><b>Positions</b><b>From</b><b>To</b>' + INT.map(function(it, i){
+    return '<span>' + it.n + '</span><span>' + it.pos.split("").map(function(p){ return POS[p].split(" ")[0]; }).join(", ") + '</span><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">' + it.n + ' available from</span><input type="time" data-i="' + i + '" data-k="from" value="' + it.from + '" aria-label="' + it.n + ' available from"></label><label><span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">' + it.n + ' available until</span><input type="time" data-i="' + i + '" data-k="to" value="' + it.to + '" aria-label="' + it.n + ' available until"></label>';
+  }).join("");
+  $("ws").value = st.ws; $("we").value = st.we; $("dur").value = st.dur;
+}
+
+function openEdit(id){
+  st.sel = id;
+  var r = st.rows.find(function(x){ return x.id == id; });
+  $("layout").className = "layout open";
+  $("drawer").hidden = false;
+  $("eWho").textContent = r.name + " · " + POS[r.pos] + " (" + r.id + ")";
+  var q = INT.map(function(_, i){ return i; }).filter(function(i){ return INT[i].pos.indexOf(r.pos) > -1; });
+  $("eInt").innerHTML = q.map(function(i){ return '<option value="' + i + '">' + INT[i].n + '</option>'; }).join("");
+  var sl = slots();
+  if (r.start != null && sl.indexOf(r.start) < 0) sl.push(r.start);
+  $("eTime").innerHTML = sl.sort(function(a, b){ return a - b; }).map(function(s){ return '<option value="' + s + '">' + rng(s) + '</option>'; }).join("");
+  $("eRoom").innerHTML = activeRooms().map(function(m){ return '<option value="' + m + '">Room ' + m + '</option>'; }).join("");
+  if (r.start != null) {
+    $("eInt").value = r.int; $("eTime").value = r.start; $("eRoom").value = r.room;
+  }
+  check();
+  render();
+  if (window.innerWidth <= 1100) $("drawer").scrollIntoView({behavior: "smooth"});
+}
+
+function trial(){
+  var r = st.rows.find(function(x){ return x.id == st.sel; });
+  var t = {id: r.id, name: r.name, sid: r.sid, pos: r.pos, start: +$("eTime").value, int: +$("eInt").value, room: $("eRoom").value};
+  var rest = st.rows.map(function(o){ return o === r ? t : o; });
+  var keep = st.rows;
+  st.rows = rest;
+  var p = problems(t);
+  st.rows = keep;
+  return {r: r, t: t, p: p};
+}
+
+function check(){
+  var x = trial(), m = $("eMsg");
+  m.className = "msg " + (x.p.length ? "bad" : "ok");
+  m.innerHTML = x.p.length ? "This change would create a conflict:<ul>" + x.p.map(function(s){ return "<li>" + s + "</li>"; }).join("") + "</ul>" : "Check passed: no overlap for the student, interviewer or room.";
+}
+
+function closeEdit(){
+  var id = st.sel;
+  st.sel = null;
+  $("layout").className = "layout";
+  $("drawer").hidden = true;
+  render();
+  var b = document.querySelector('[data-id="' + id + '"]');
+  if (b) b.focus();
+}
+
+document.addEventListener("click", function(e){
+  var b = e.target.closest("button[data-id]");
+  if (b && !st.confirmed) openEdit(b.dataset.id);
+});
+
+["eInt","eTime","eRoom"].forEach(function(i){ $(i).onchange = check; });
+$("eClose").onclick = $("eCancel").onclick = closeEdit;
+$("eApply").onclick = function(){
+  var x = trial();
+  x.r.start = x.t.start;
+  x.r.int = x.t.int;
+  x.r.room = x.t.room;
+  x.r.reason = "";
+  toast(x.p.length ? "Applied. Conflict flagged: confirmation stays blocked." : "Assignment updated.");
+  closeEdit();
+};
+
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && st.sel && !$("dlg").open) closeEdit();
+});
+
+$("gen").onclick = function(){
+  generate();
+  closeEdit2();
+  render();
+  toast("Draft generated. Review it, then save changes.");
+};
+
+function closeEdit2(){ st.sel = null; $("layout").className = "layout"; $("drawer").hidden = true; }
+$("save").onclick = function(){ save(); toast("Draft saved. It is not confirmed yet."); };
+$("ws").onchange = function(){ st.ws = this.value; render(); };
+$("we").onchange = function(){ st.we = this.value; render(); };
+$("dur").onchange = function(){ st.dur = +this.value; st.drafted && generate(); render(); };
+$("rooms").onchange = function(e){ st.rooms[e.target.dataset.room] = e.target.checked ? 1 : 0; render(); };
+$("ints").onchange = function(e){ var t = e.target; INT[+t.dataset.i][t.dataset.k] = t.value; render(); };
+
+$("approve").onclick = function(){
+  var pend = APPS.filter(function(a){ return statuses()[a[0]] === "Pending"; }).length, it = checks(pend);
+  $("dList").innerHTML = it.map(function(i){
+    return '<div class="chk"><i class="' + (i[0] ? "y" : "n") + '" aria-hidden="true">' + (i[0] ? "✓" : "!") + '</i><span>' + i[1] + '</span></div>';
+  }).join("");
+  $("dOk").disabled = it.some(function(i){ return !i[0]; });
+  $("dlg").showModal();
+};
+
+$("dBack").onclick = function(){ $("dlg").close(); };
+$("dOk").onclick = function(){ st.confirmed = true; save(); $("dlg").close(); render(); toast("Schedule confirmed."); };
+
+$("csv").onclick = function(){
+  var rows = [["Application","Applicant","Student ID","Position","Date","Time","Interviewer","Room","Status"]].concat(st.rows.map(function(r){
+    var a = r.start != null;
+    return [r.id, r.name, r.sid, POS[r.pos], C.interview, a ? rng(r.start) : "", a ? INT[r.int].n : "", a ? "Room " + r.room : "", status(r)];
+  }));
+  var csv = "\ufeff" + rows.map(function(r){
+    return r.map(function(c){ return '"' + String(c).replace(/"/g, '""') + '"'; }).join(",");
+  }).join("\r\n");
+  var l = document.createElement("a");
+  l.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+  l.download = "interview-timetable.csv";
+  l.click();
+};
+
+$("reset").onclick = function(){
+  CF.reset();
+  try { localStorage.removeItem(SK); } catch(e){}
+  location.reload();
+};
+
+document.title = "Interview Scheduling · " + C.name + " · ClubFlow";
+$("cName").textContent = $("cName2").textContent = C.name;
+$("idate").value = CF.fmt ? CF.fmt(C.interview) : C.interview;
+$("cSub").textContent = C.club + " · Interview date " + (CF.fmt ? CF.fmt(C.interview) : C.interview) + " · Applications closed " + (CF.fmt ? CF.fmt(C.closing) : C.closing);
+load();
+buildSettings();
+render();
+})();
+</script>
+</body>
+</html>
