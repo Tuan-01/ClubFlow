@@ -5,6 +5,8 @@ import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ExecutiveCampaignPage } from './pages/ExecutiveCampaignPage';
 import { ExecutiveInterviewSetupPage } from './pages/ExecutiveInterviewSetupPage';
+import { ExecutiveApplicationsPage } from './pages/ExecutiveApplicationsPage';
+import { ExecutiveSchedulingPage } from './pages/ExecutiveSchedulingPage';
 import {
   ApplicationDetailStubPage,
   ApplyStubPage,
@@ -76,13 +78,7 @@ export function App() {
             path="/executive/applications"
             element={
               <ProtectedRoute allowedRoles={['executive']}>
-                <ExecutiveRouteStubPage
-                  title="Application Review"
-                  heading="Application Review"
-                  stepLabel="Step C7"
-                  endpointHint="GET /api/applications"
-                  subtitle="Review applications, manage internal notes, and shortlist or reject candidates."
-                />
+                <ExecutiveApplicationsPage />
               </ProtectedRoute>
             }
           />
@@ -90,13 +86,7 @@ export function App() {
             path="/executive/scheduling"
             element={
               <ProtectedRoute allowedRoles={['executive']}>
-                <ExecutiveRouteStubPage
-                  title="Interview Scheduling"
-                  heading="Interview Scheduling"
-                  stepLabel="Steps C8–C9"
-                  endpointHint="GET /api/schedule"
-                  subtitle="Generate draft interview timetables, resolve conflicts, and confirm schedule."
-                />
+                <ExecutiveSchedulingPage />
               </ProtectedRoute>
             }
           />

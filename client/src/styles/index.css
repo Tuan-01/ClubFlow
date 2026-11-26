@@ -510,6 +510,7 @@ p {
 /* Form Controls */
 .form-group {
   margin-bottom: var(--space-4);
+  min-width: 0;
 }
 
 label {
@@ -793,6 +794,8 @@ textarea {
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4);
   box-shadow: var(--shadow-sm);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .stat-card.stat-success {
@@ -885,9 +888,13 @@ textarea {
    -------------------------------------------------------------------------- */
 .review-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   align-items: start;
+}
+
+.review-layout > * {
+  min-width: 0;
 }
 
 .applicant-card-list {
@@ -966,6 +973,7 @@ textarea {
   font-style: italic;
   font-size: 0.9375rem;
   margin-bottom: var(--space-3);
+  overflow-wrap: anywhere;
 }
 
 .file-attachment-card {
@@ -1006,11 +1014,11 @@ textarea {
   }
 
   .form-grid-2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .form-grid-3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .login-grid {
@@ -1042,10 +1050,14 @@ textarea {
     padding: var(--space-4) var(--space-8);
   }
 
-  /* Two-column persistent review layout where BOTH list & drawer are visible */
+  /* Two-column persistent review layout only when drawer is open on desktop */
   .review-layout {
-    grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr);
+    grid-template-columns: 1fr;
     gap: var(--space-6);
+  }
+
+  .review-layout.drawer-open {
+    grid-template-columns: minmax(0, 1.2fr) minmax(360px, 1fr);
   }
 
   .drawer-panel {
@@ -1295,5 +1307,376 @@ textarea {
 
   .preview-positions-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .review-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .review-toolbar-search {
+    grid-column: 1 / -1;
+  }
+
+  .applicant-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Executive Application Review (C7)
+   -------------------------------------------------------------------------- */
+.review-toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.review-toolbar .form-group {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.review-list-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.review-list-header h2 {
+  margin-bottom: 0;
+}
+
+.review-list-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.applicant-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.applicant-title-group {
+  min-width: 0;
+}
+
+.applicant-card .applicant-name {
+  margin-bottom: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.applicant-card .applicant-role {
+  overflow-wrap: anywhere;
+}
+
+.applicant-card .applicant-meta {
+  overflow-wrap: anywhere;
+}
+
+.applicant-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.pagination-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.pagination-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.drawer-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.drawer-header-text {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.drawer-header-text h2 {
+  margin-bottom: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.drawer-close-btn {
+  flex-shrink: 0;
+}
+
+.drawer-section-title {
+  font-size: 0.875rem;
+  font-weight: 750;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+
+.drawer-sibling-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.drawer-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.drawer-cv-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.cv-preview-box {
+  margin-top: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-bg-page);
+}
+
+.cv-preview-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.cv-preview-frame {
+  display: block;
+  width: 100%;
+  height: 320px;
+  border: 0;
+  background-color: var(--color-surface);
+}
+
+.drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.drawer-actions .btn {
+  flex: 1 1 140px;
+}
+
+@media (min-width: 1280px) {
+  .review-toolbar {
+    grid-template-columns: minmax(220px, 1.8fr) repeat(3, minmax(140px, 1fr)) minmax(96px, 0.7fr);
+  }
+
+  .review-toolbar-search {
+    grid-column: auto;
+  }
+
+  .review-layout.drawer-open .applicant-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Interview Scheduling (C8, C9)
+   -------------------------------------------------------------------------- */
+
+/* Table horizontal scroll wrapper */
+.table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-3);
+}
+
+.table-wrap .data-table {
+  min-width: 780px;
+  margin-bottom: 0;
+}
+
+.table-wrap .data-table tr.row-selected {
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+.sched-table-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.sched-table-header h2 {
+  margin-bottom: 0;
+}
+
+.sched-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 0.875rem;
+  margin-top: var(--space-2);
+}
+
+/* Issue rows in needs attention card */
+.sched-issue-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.sched-issue-row:first-of-type {
+  border-top: none;
+}
+
+.sched-issue-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sched-issue-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+/* Layout: table + drawer side by side */
+.sched-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.sched-layout > * {
+  min-width: 0;
+}
+
+/* Confirm dialog */
+.sched-confirm-dialog {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  max-width: 540px;
+  width: calc(100% - var(--space-8));
+  color: var(--color-text-main);
+}
+
+.sched-confirm-dialog::backdrop {
+  background: rgba(24, 27, 46, 0.45);
+}
+
+.sched-checks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: var(--space-4) 0;
+}
+
+.sched-check-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.sched-check-item:last-child {
+  border-bottom: none;
+}
+
+.sched-check-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.sched-check-icon.check-pass {
+  background-color: var(--color-success);
+}
+
+.sched-check-icon.check-fail {
+  background-color: var(--color-danger);
+}
+
+.sched-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* Responsive: scheduling layout drawer */
+@media (min-width: 1280px) {
+  .sched-layout.drawer-open {
+    grid-template-columns: minmax(0, 1.3fr) minmax(360px, 1fr);
+  }
+
+  .sched-layout.drawer-open .drawer-panel {
+    position: sticky;
+    top: var(--space-6);
   }
 }
